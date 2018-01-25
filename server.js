@@ -17,13 +17,9 @@ server.on(`connection`, (socket) => {
     request = request[0].split(` `);
     let http = request[2].trim();
     let uri = request[1].trim();
-    console.log(uri);
-
     // parseRequest(data);
-    console.log(http);
 
     socket.write(createResponse(http, uri));
-    
     socket.end();
   });
 
@@ -38,19 +34,12 @@ server.listen(8080, () => {
 
 // function parseRequest(data) {
 //   let request = data.toString().split(`\n`);
-//   console.log(request);
 //   request = request[0].split(` `);
-//   console.log(request);
 //   let http = request[2].trim();
-//   console.log(http);
 //   let uri = request[1].trim();
-//   console.log(uri);
 // }
 
 function createResponse(http, uri) {
-
-  // console.log(uri);
-  // console.log(path.index);
 
   let date = new Date().toUTCString();
 
