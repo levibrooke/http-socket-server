@@ -13,13 +13,8 @@ server.on(`connection`, (socket) => {
   console.log(`Connection established`);
 
   socket.on(`data`, (data) => {
-    let request = data.toString().split(`\n`);
-    request = request[0].split(` `);
-    let http = request[2].trim();
-    let uri = request[1].trim();
-    // parseRequest(data);
-
-    socket.write(createResponse(http, uri));
+    let request = parseRequest(data);
+    socket.write(createResponse(request.http, request.uri));
     socket.end();
   });
 
@@ -32,25 +27,30 @@ server.listen(8080, () => {
   console.log(`Server listening on port 8080`);
 });
 
-// function parseRequest(data) {
-//   let request = data.toString().split(`\n`);
-//   request = request[0].split(` `);
-//   let http = request[2].trim();
-//   let uri = request[1].trim();
-// }
+function parseRequest(data) {
+  console.log(data);
+  let parse = data.toString().split(`\n`);
+  parse = parse[0].split(` `);
+  method = parse[0].trim();
+  uri = parse[1].trim();
+  http = parse[2].trim();
+  return {
+    method: method,
+    uri: uri,
+    http: http 
+  };
+}
 
 function createResponse(http, uri) {
-
   let date = new Date().toUTCString();
 
-  if (uri === `/index` || uri === `/`) {
-    // return `${http} 200 OK\nServer: local server\nDate: ${date}\n\n${path[`/index`]}`;
+  if (uri === `/index` || uri === `/index.html` || uri === `/`) {
     return "" + http + " 200 OK\nServer: local server\nDate: " + date + "\n\n" + path.index + "";
   }
-  if (uri === `/helium.html`) {
+  if (uri === `/helium.html` || uri === `/helium`) {
     return "" + http + " 200 OK\nServer: local server\nDate: " + date + "\n\n" + path.helium + "";
   }
-  if (uri === `/hydrogen.html`) {
+  if (uri === `/hydrogen.html` || uri === `/hydrogen`) {
     return "" + http + " 200 OK\nServer: local server\nDate: " + date + "\n\n" + path.hydrogen + "";
   }
   if (uri === `/css/styles.css`) {
