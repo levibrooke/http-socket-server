@@ -1,6 +1,12 @@
 const net = require(`net`);
-const fs = require(`fs`);
 const server = net.createServer();
+const path = {
+  index: require(`./index.js`),
+  helium: require(`./helium.js`),
+  hydrogen: require(`./hydrogen.js`),
+  fourOhFour: require(`./404.js`),
+  css: require(`./style.js`)
+}
 
 server.on(`connection`, (socket) => {
   socket.setEncoding(`utf8`);
@@ -8,18 +14,15 @@ server.on(`connection`, (socket) => {
 
   socket.on(`data`, (data) => {
     let request = data.toString().split(`\n`);
-    console.log(request);
     request = request[0].split(` `);
-    console.log(request);
     let http = request[2].trim();
-    console.log(http);
     let uri = request[1].trim();
     console.log(uri);
 
     // parseRequest(data);
     console.log(http);
 
-    socket.write(createResponse(http));
+    socket.write(createResponse(http, uri));
     
     socket.end();
   });
@@ -33,23 +36,38 @@ server.listen(8080, () => {
   console.log(`Server listening on port 8080`);
 });
 
-function parseRequest(data) {
-  let request = data.toString().split(`\n`);
-  console.log(request);
-  request = request[0].split(` `);
-  console.log(request);
-  let http = request[2].trim();
-  console.log(http);
-  let uri = request[1].trim();
-  console.log(uri);
-}
+// function parseRequest(data) {
+//   let request = data.toString().split(`\n`);
+//   console.log(request);
+//   request = request[0].split(` `);
+//   console.log(request);
+//   let http = request[2].trim();
+//   console.log(http);
+//   let uri = request[1].trim();
+//   console.log(uri);
+// }
 
-function createResponse(http) {
+function createResponse(http, uri) {
+
+  // console.log(uri);
+  // console.log(path.index);
 
   let date = new Date().toUTCString();
 
-  // if (200) {
-    return `${http} 200 OK\nServer: local server\nDate: ${date}\n\n<html><body>Success</body></html>`;
-  // }
-
+  if (uri === `/index` || uri === `/`) {
+    // return `${http} 200 OK\nServer: local server\nDate: ${date}\n\n${path[`/index`]}`;
+    return "" + http + " 200 OK\nServer: local server\nDate: " + date + "\n\n" + path.index + "";
+  }
+  if (uri === `/helium.html`) {
+    return "" + http + " 200 OK\nServer: local server\nDate: " + date + "\n\n" + path.helium + "";
+  }
+  if (uri === `/hydrogen.html`) {
+    return "" + http + " 200 OK\nServer: local server\nDate: " + date + "\n\n" + path.hydrogen + "";
+  }
+  if (uri === `/css/styles.css`) {
+    return "" + http + " 200 OK\nServer: local server\nDate: " + date + "\nContent-Type: text/css\n\n" + path.css + "";
+  }
+  else {
+    return "" + http + " 404 NOT FOUND\nServer: local server\nDate: " + date + "\n\n" + path.fourOhFour + "";
+  }
 }
